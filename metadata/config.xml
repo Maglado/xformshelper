@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//OpenMRS//DTD OpenMRS Config 1.0//EN" "http://resources.openmrs.org/doctype/config-1.0.dtd">
+<module configVersion="1.0">
+	
+	<!-- Base Module Properties -->
+	<id>xformshelper</id>
+	<name>Xforms Helper</name>
+	<version>1.1.7</version>
+	<package>org.openmrs.module.@MODULE_ID@</package>
+	<author>MindFlow Systems</author>
+	<description>
+			Allows for submitting of xforms from remote devices and provides web based error resolution mechanism
+	</description>
+	<activator>@MODULE_PACKAGE@.XformsHelperActivator</activator>
+	
+	<!-- None so far -->
+	<updateURL></updateURL>
+	<!-- /Base Module Properties -->
+	
+	<require_version>1.6.0.00</require_version>
+	<require_database_version>1.2.04</require_database_version>
+
+	<require_modules>
+		<require_module version="3.9.9">org.openmrs.module.xforms</require_module>
+		<require_module version="1.0.0">org.openmrs.module.odkconnector</require_module>
+	</require_modules>
+	
+	<!-- Extensions -->
+	<extension>
+		<point>org.openmrs.admin.list</point>
+		<class>@MODULE_PACKAGE@.extension.html.XformsHelperAdminExt</class>
+	</extension>
+	<!-- /Extensions -->
+	
+	<!-- Required Privileges -->
+    <privilege>
+		<name>View xform Properties</name>
+		<description>
+			Allows user to view module properties 
+		</description>
+	</privilege>
+	<privilege>
+		<name>View xform Errors</name>
+		<description>
+			Allows user to view Xforms errors
+		</description>
+	</privilege>
+	<privilege>
+		<name>View xform xform</name>
+		<description>
+			Allows user to view an xform in the error queue
+		</description>
+	</privilege>
+	<privilege>
+		<name>Edit xform</name>
+		<description>
+			Allows user to edit or modify an xform in the error queue
+		</description>
+	</privilege>
+	<privilege>
+		<name>Comment on xform Errors</name>
+		<description>
+			Allows user to review and comment on Xforms errors
+		</description>
+	</privilege>
+	<privilege>
+		<name>Resolve xform Error</name>
+		<description>
+			Allows user to resolve Xforms error
+		</description>
+	</privilege>
+	<privilege>
+		<name>Manage Downloadable forms</name>
+		<description>
+			Allows user to manage downloadable forms
+		</description>
+	</privilege>
+	<!-- /Required Privileges -->
+	
+	<!-- Any required properties goes here-->
+	<globalProperty>
+		<property>@MODULE_ID@.drop_dir</property>
+		<defaultValue>xformshelper/drop_dir</defaultValue>
+		<description>Directory where remote devices drop forms.</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.queue_dir</property>
+		<defaultValue>xformshelper/queue</defaultValue>
+		<description>Directory for queuing Xforms before they are processed.</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.error_dir</property>
+		<defaultValue>xformshelper/error</defaultValue>
+		<description>Directory for keeping erred forms during processing</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.archive_dir</property>
+		<defaultValue>xformshelper/archive/%Y/%M</defaultValue>
+		<description>Directory for storing successfully processed forms.</description>
+	</globalProperty>
+	<globalProperty>
+		<property>@MODULE_ID@.processHousehold</property>
+		<defaultValue>false</defaultValue>
+		<description>Property indicates whether the helper is processing Household forms</description>
+	</globalProperty>
+	
+	<!-- Servlets -->
+	<!-- Accessed through the url /pageContext()/moduleServlet/<moduleId>/<servlet-name> -->
+	<servlet>
+		<servlet-name>xfhFormUpload</servlet-name>
+		<servlet-class>@MODULE_PACKAGE@.web.XformsHelperFileUploadServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>xfhFormList</servlet-name>
+		<servlet-class>@MODULE_PACKAGE@.web.XFormsHelperFormListServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>xfhFormDownload</servlet-name>
+		<servlet-class>@MODULE_PACKAGE@.web.XformsHelperDownloadServlet</servlet-class>
+	</servlet>
+	
+	<!-- Add a location header Filter, Necessary a security check for the submitting forms -->
+	<filter>
+    	<filter-name>xfhLocationFilter</filter-name>
+        <filter-class>@MODULE_PACKAGE@.web.LocationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>locationFilter</filter-name>
+ 		<url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+	<!-- Internationalization -->
+	<!-- All message codes should start with moduleId.* -->
+	<messages>
+		<lang>en</lang>
+		<file>messages.properties</file>
+	</messages>
+	<!-- /Internationalization -->
+	
+	<mappingFiles>
+		XformsError.hbm.xml
+		XformsHelperXform.hbm.xml
+	</mappingFiles>
+	
+</module>

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="@MODULE_PACKAGE@">
+
+	<class name="XformsHelperXform" table="xformshelper_xform">
+		<id name="xformsHelperXformId" type="int" column="xformshelper_xform_id" 
+			unsaved-value="0">
+			<generator class="native" />
+		</id>
+		
+		<property name="xformId" type="int" column="xform_id"/>
+		
+		<property name="xformName" type="java.lang.String" 
+			column="xform_name" not-null="true" length="16777215" />
+		
+		<property name="xformMeta" type="java.lang.String" column="xform_meta"/>
+		
+		<property name="xformXml" type="java.lang.String" not-null="false" 
+			column="xform_xml" length="2147483647" />
+			
+		<property name="program" type="int" column="form_program"/>
+			
+		<many-to-one name="creator" class="org.openmrs.User" not-null="true">
+			<column name="creator" />
+		</many-to-one>
+
+		<property name="dateCreated" type="java.util.Date" 
+			column="date_created" not-null="true" length="19" />
+
+	</class>
+</hibernate-mapping>

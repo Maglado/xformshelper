@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqldiff PUBLIC "-//OpenMRS//DTD OpenMRS SQL Diff Config 1.0//EN" "http://resources.openmrs.org/doctype/sqldiff-1.0.dtd">
+
+<sqldiff version="1.0">
+	<help>
+		USE:
+			The diffs are ordered by datamodel version number.
+			The script can be run in a top down fashion and is
+			expected to not failor overwrite old data
+		
+		EXPECT:
+			- "use business-database-name;" was called prior to
+			   calling this script
+	</help>
+	
+	<diff>
+		<version>1.0.0</version>
+		<author>Samuel Mbugua</author>
+		<date>March 20th 2011</date>
+		<description>
+			Creates all required tables and the processor tasks
+		</description>
+		<sql>
+			INSERT INTO
+				scheduler_task_config
+			 (
+				name, description, schedulable_class, start_time, repeat_interval, start_on_startup, created_by, date_created,uuid
+			) 
+			VALUES 
+			(
+				'Process Xforms',
+				'This class calls the xform processor to process all forms in the xform queue.',
+				'org.openmrs.module.xformshelper.ProcessXformsTask',
+				'2009-09-15 22:22:00',
+				30,
+				1,
+				1,
+				'2009-09-15 22:22:00',
+				uuid()
+			);
+
+			
+			CREATE TABLE IF NOT EXISTS `xformshelper_xform` (
+			  `xformshelper_xform_id` int(11) NOT NULL auto_increment,
+			  `xform_id` int(11) NOT NULL,
+			  `xform_name` varchar(255) NOT NULL default '',
+			  `xform_meta` varchar(100),
+			  `xform_xml` longtext,
+			  `creator` int(11) NOT NULL default '0',
+			  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+			  PRIMARY KEY  (`xformshelper_xform_id`),
+			  KEY `user_who_added_xform` (`creator`),
+			  CONSTRAINT `user_who_added_xform` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			
+			
+			CREATE TABLE IF NOT EXISTS `xformshelper_xform_error` (
+			  `xforms_error_id` int(11) NOT NULL auto_increment,
+			  `form_name` mediumtext NOT NULL,
+			  `error` varchar(255) NOT NULL default '',
+			  `error_details` text,
+			  `comment` varchar(255) default '',
+			  `commented_by` int(11) default '0',
+			  `date_commented` datetime default NULL,
+			  `creator` int(11) NOT NULL default '0',
+			  `date_created` datetime NOT NULL default '0000-00-00 00:00:00',
+			  PRIMARY KEY  (`xforms_error_id`),
+			  KEY `User who created xforms helper error` (`creator`),
+			  CONSTRAINT `User who created xforms helper error` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
+			  KEY `User who commented on this xforms helper error` (`commented_by`),
+			  CONSTRAINT `User who commented on this xforms helper error` FOREIGN KEY (`commented_by`) REFERENCES `users` (`user_id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			
+		</sql>
+	</diff>
+	
+	<diff>
+		<version>1.0.1</version>
+		<author>Samuel Mbugua</author>
+		<date>September 19th 2012</date>
+		<description>
+			Adding program field to xform table.
+		</description>
+		<sql>
+			ALTER TABLE xformshelper_xform ADD form_program int(11);	
+		</sql>
+	</diff>
+
+</sqldiff>
